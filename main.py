@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from tkinter import ttk
 
 class PasswordStrengthChecker:
     def __init__(self, master):
@@ -13,8 +13,10 @@ class PasswordStrengthChecker:
         self.what_page_am_i_on = "main_menu"
 
         if self.what_page_am_i_on == "main_menu":
-            # all displays for main menu here
-            pass
+            title = ttk.Label(self.master, text="Password Strength Checker", font=("Segoe UI", 18, "bold"))
+            title.pack(pady=(10, 5)) # use pack to force centering
+            
+            
         elif self.what_page_am_i_on == "password_generator_settings_menu":
             # all displays for password generator settings menu here
             pass
