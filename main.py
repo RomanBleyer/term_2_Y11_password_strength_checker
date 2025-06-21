@@ -20,16 +20,26 @@ class PasswordStrengthChecker:
         # Track which page we're on
         self.what_page_am_i_on = getattr(self, "what_page_am_i_on", "main_menu")
 
-        # Settings state dict (persistent)
-        self.settings_state = {
-            "use_capital_letters": True,
-            "use_special_characters": True,
-            "use_numbers": True,
-            "copy_after_generation": True,
-            "check_strength_after_generation": True
-        }
+        # Only initialize settings_state if it doesn't exist yet
+        if not hasattr(self, "settings_state"):
+            self.settings_state = {
+                "use_capital_letters": True,
+                "use_special_characters": True,
+                "use_numbers": True,
+                "copy_after_generation": True,
+                "check_strength_after_generation": True
+            }
 
         if self.what_page_am_i_on == "main_menu":
+            # Destroy all widgets from previous menu
+            if hasattr(self, 'widgets'):
+                for widget in self.widgets:
+                    widget.destroy()
+            self.widgets = []
+
+            # Unbind any previous <Return> events
+            self.master.unbind('<Return>')
+
             widgets = []
             # Title
             title = ttk.Label(self.master, text="Password Strength Checker", font=("Segoe UI", 18, "bold"))
@@ -43,7 +53,9 @@ class PasswordStrengthChecker:
 
             # Entry row widgets
             copy_btn = copy_to_clipboard_button(entry_frame, None, widgets)
-            password_entry = create_password_entry(entry_frame, widgets)
+            # Persistent StringVar for password entry
+            self.password_var = getattr(self, 'password_var', tk.StringVar())
+            password_entry = create_password_entry(entry_frame, widgets, textvariable=self.password_var)
             show_password_state = [True]
             eye_btn = hide_unhide_password_button(entry_frame, password_entry, widgets, show_password_state)
 
@@ -77,8 +89,8 @@ class PasswordStrengthChecker:
             widgets.append(generate_btn)
 
             # Entry for password length (default 12)
-            length_var = tk.StringVar(value="12")
-            length_entry = tk.Entry(self.master, textvariable=length_var, width=4, font=("Segoe UI", 12), justify="center")
+            self.length_var = getattr(self, 'length_var', tk.StringVar(value="12"))
+            length_entry = tk.Entry(self.master, textvariable=self.length_var, width=4, font=("Segoe UI", 12), justify="center")
             length_entry.place(x=260, y=controls_y+7, width=40, height=26)
             widgets.append(length_entry)
 
@@ -110,6 +122,14 @@ class PasswordStrengthChecker:
             widgets.append(about_btn)
 
         elif self.what_page_am_i_on == "password_generator_settings_menu":
+            # Destroy all widgets from previous menu
+            if hasattr(self, 'settings_widgets'):
+                for widget in self.settings_widgets:
+                    widget.destroy()
+            self.settings_widgets = []
+
+            self.master.unbind('<Return>')
+
             settings_widgets = []
 
             # 5 toggle buttons for settings (no title)
