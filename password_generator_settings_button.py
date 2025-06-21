@@ -4,7 +4,7 @@ import os
 
 def password_generator_settings_button(master, widgets, go_to_settings_callback):
     image_path = os.path.join(os.path.dirname(__file__), "password_checker_images", "settings_gear.png")
-    settings_img = Image.open(image_path).resize((15, 15))
+    settings_img = Image.open(image_path).resize((30, 30))
     settings_image = ImageTk.PhotoImage(settings_img)
 
     settings_button = tk.Button(

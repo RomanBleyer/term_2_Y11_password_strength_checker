@@ -32,7 +32,7 @@ class PasswordStrengthChecker:
             widgets = []
             # Title
             title = ttk.Label(self.master, text="Password Strength Checker", font=("Segoe UI", 18, "bold"))
-            title.place(x=100, y=10)
+            title.place(relx=0.5, y=10, anchor="n")  # Centered horizontally at the top
             widgets.append(title)
 
             # Entry row frame
@@ -46,23 +46,56 @@ class PasswordStrengthChecker:
             show_password_state = [True]
             eye_btn = hide_unhide_password_button(entry_frame, password_entry, widgets, show_password_state)
 
-            # Place entry row widgets
-            copy_btn.place(x=0, y=0, width=40, height=40)
-            password_entry.place(x=45, y=0, width=280, height=40)
-            eye_btn.place(x=330, y=0, width=40, height=40)
+            # Center the password bar (entry) in the entry_frame
+            copy_btn.place(x=25, y=0, width=40, height=40)  # 25px from the left, aligned with password bar
+            password_entry.place(x=70, y=0, width=280, height=40)  # Centered in 420px frame: (420-280)/2 = 70
+            eye_btn.place(x=355, y=0, width=40, height=40)  # 420-40-25 = 355
 
-            # Settings button below entry row
-            settings_frame = tk.Frame(self.master)
-            settings_frame.place(x=200, y=110, width=100, height=40)
-            widgets.append(settings_frame)
+            # --- Controls row under the password bar ---
+            controls_y = 110  # y position under the password bar
+
+            # Define go_to_settings BEFORE using it
             def go_to_settings():
                 for widget in widgets:
                     widget.destroy()
                 widgets.clear()
                 self.what_page_am_i_on = "password_generator_settings_menu"
                 self.__init__(self.master)
-            settings_btn = password_generator_settings_button(settings_frame, widgets, go_to_settings)
-            settings_btn.place(x=0, y=0, width=40, height=40)
+
+            # Settings button (leftmost)
+            settings_btn2 = password_generator_settings_button(self.master, widgets, go_to_settings)
+            settings_btn2.place(x=40, y=controls_y, width=40, height=40)
+
+            # Generate Password button (big)
+            def on_generate():
+                # You can implement password generation logic here
+                pass  # Replace with your logic
+
+            generate_btn = tk.Button(self.master, text="Generate Password", font=("Segoe UI", 12, "bold"), command=on_generate)
+            generate_btn.place(x=90, y=controls_y, width=160, height=40)
+            widgets.append(generate_btn)
+
+            # Entry for password length (default 12)
+            length_var = tk.StringVar(value="12")
+            length_entry = tk.Entry(self.master, textvariable=length_var, width=4, font=("Segoe UI", 12), justify="center")
+            length_entry.place(x=260, y=controls_y+7, width=40, height=26)
+            widgets.append(length_entry)
+
+            # Label for "maximum 16 characters"
+            max_label = ttk.Label(self.master, text="maximum 16 characters", font=("Segoe UI", 10))
+            max_label.place(x=310, y=controls_y+10)
+            widgets.append(max_label)
+
+            # --- Check Password button centered under controls row ---
+            check_btn = tk.Button(
+                self.master,
+                text="Check Password",
+                font=("Segoe UI", 12, "bold"),
+                command=lambda: print("Check password logic here")  # Replace with your logic
+            )
+            # Centered horizontally: window width is 500, button width is 160
+            check_btn.place(x=170, y=controls_y+45, width=160, height=40)  # moved up by 10px
+            widgets.append(check_btn)
 
         elif self.what_page_am_i_on == "password_generator_settings_menu":
             settings_widgets = []
