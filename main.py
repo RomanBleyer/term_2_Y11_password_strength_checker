@@ -8,7 +8,8 @@ from hide_unhide_password import hide_unhide_password_button
 from password_generator_settings_button import password_generator_settings_button
 from back_to_main_menu_button import back_to_main_menu_button
 from password_generation_settings import create_password_generation_settings
-
+from about_us_tab import about_us_button
+from about_us_window import show_about_us_window
 class PasswordStrengthChecker:
     def __init__(self, master):
         self.master = master
@@ -97,6 +98,17 @@ class PasswordStrengthChecker:
             check_btn.place(x=170, y=controls_y+45, width=160, height=40)  # moved up by 10px
             widgets.append(check_btn)
 
+            # About button (rightmost)
+            def go_to_about():
+                for widget in widgets:
+                    widget.destroy()
+                widgets.clear()
+                self.what_page_am_i_on = "about_me_and_help_menu"
+                self.__init__(self.master)
+
+            about_btn = about_us_button(self.master, widgets, go_to_about)
+            widgets.append(about_btn)
+
         elif self.what_page_am_i_on == "password_generator_settings_menu":
             settings_widgets = []
 
@@ -131,8 +143,10 @@ class PasswordStrengthChecker:
                 self.master.bind('<Return>', on_enter)
 
         elif self.what_page_am_i_on == "about_me_and_help_menu":
-            # all displays for about me and help menu here
-            pass
+            def return_to_main_menu():
+                self.what_page_am_i_on = "main_menu"
+                self.__init__(self.master)
+            show_about_us_window(self.master, return_to_main_menu)
 
 if __name__ == "__main__":
     root = tk.Tk()
