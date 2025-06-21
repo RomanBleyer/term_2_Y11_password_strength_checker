@@ -7,15 +7,6 @@ copy_after_generation = True
 check_strength_after_generation = True
 
 def create_password_generation_settings(master, widgets, state):
-    # state should be a dict with the 5 boolean values, e.g.:
-    # state = {
-    #     "use_capital_letters": True,
-    #     "use_special_characters": True,
-    #     "use_numbers": True,
-    #     "copy_after_generation": True,
-    #     "check_strength_after_generation": True
-    # }
-
     def toggle(key, button):
         state[key] = not state[key]
         button.config(text=f"{labels[key]}: {state[key]}")
