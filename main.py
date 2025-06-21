@@ -4,6 +4,7 @@ from tkinter import ttk
 # File function imports
 from password_enter_tab import create_password_entry
 from copy_to_clipboard_button import copy_to_clipboard_button
+from hide_unhide_password import hide_unhide_password_button
 from frame_packing_organisation import main_menu_organisation
 
 class PasswordStrengthChecker:
@@ -19,11 +20,15 @@ class PasswordStrengthChecker:
 
         if self.what_page_am_i_on == "main_menu":
             title = ttk.Label(self.master, text="Password Strength Checker", font=("Segoe UI", 18, "bold"))
-            title.pack(pady=(10, 5)) # use pack to force centering
+            title.pack(pady=(10, 5))
             widgets = []
             entry_frame = main_menu_organisation(self.master)
             password_entry = create_password_entry(entry_frame, widgets)
-            copy_to_clipboard_button(entry_frame, password_entry, widgets)
+            copy_btn = copy_to_clipboard_button(entry_frame, password_entry, widgets)
+            password_entry.pack(side="left", padx=(5, 0))  # Pack entry after copy button
+            show_password_state = [True]
+            eye_btn = hide_unhide_password_button(entry_frame, password_entry, widgets, show_password_state)
+            eye_btn.pack(side="left", padx=(5, 0))  # Pack eye button after entry
         elif self.what_page_am_i_on == "password_generator_settings_menu":
             # all displays for password generator settings menu here
             pass

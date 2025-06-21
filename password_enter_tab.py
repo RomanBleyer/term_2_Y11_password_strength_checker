@@ -7,7 +7,7 @@ def create_password_entry(parent, widgets):
         foreground="grey", justify="center"
     )
     password_entry.insert(0, placeholder)
-    password_entry.pack(side="right", padx=(5, 0))  # Entry on the right
+    # Do NOT pack here! Let main.py handle packing order.
     widgets.append(password_entry)
 
     def on_entry_click(event):
