@@ -3,6 +3,8 @@ from tkinter import ttk
 
 # File function imports
 from password_enter_tab import create_password_entry
+from copy_to_clipboard_button import copy_to_clipboard_button
+from frame_packing_organisation import main_menu_organisation
 
 class PasswordStrengthChecker:
     def __init__(self, master):
@@ -18,8 +20,10 @@ class PasswordStrengthChecker:
         if self.what_page_am_i_on == "main_menu":
             title = ttk.Label(self.master, text="Password Strength Checker", font=("Segoe UI", 18, "bold"))
             title.pack(pady=(10, 5)) # use pack to force centering
-            create_password_entry(self.master, [])
-            
+            widgets = []
+            entry_frame = main_menu_organisation(self.master)
+            password_entry = create_password_entry(entry_frame, widgets)
+            copy_to_clipboard_button(entry_frame, password_entry, widgets)
         elif self.what_page_am_i_on == "password_generator_settings_menu":
             # all displays for password generator settings menu here
             pass

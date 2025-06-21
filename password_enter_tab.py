@@ -1,20 +1,20 @@
 import tkinter as tk
 
-def create_password_entry(master, widgets):
+def create_password_entry(parent, widgets):
     placeholder = "Enter your password"
     password_entry = tk.Entry(
-        master, width=30, font=("Segoe UI", 16, "bold"),
+        parent, width=30, font=("Segoe UI", 16, "bold"),
         foreground="grey", justify="center"
     )
     password_entry.insert(0, placeholder)
-    password_entry.pack(pady=(0, 5), padx=20)
+    password_entry.pack(side="right", padx=(5, 0))  # Entry on the right
     widgets.append(password_entry)
 
-    def on_entry_click(event):  # Accept event argument
+    def on_entry_click(event):
         if password_entry.get() == placeholder:
             password_entry.delete(0, tk.END)
 
-    def on_focusout(event):  # Accept event argument
+    def on_focusout(event):
         if not password_entry.get():
             password_entry.insert(0, placeholder)
             password_entry.config(foreground="grey", show="")
