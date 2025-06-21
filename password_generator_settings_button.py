@@ -14,7 +14,7 @@ def password_generator_settings_button(master, widgets, go_to_settings_callback)
         borderwidth=0
     )
     settings_button.image = settings_image  # Prevent garbage collection
-    settings_button.pack(side="left", padx=(5, 0))  # Add to the row
+    # Do NOT pack here! Let main.py handle packing order.
     widgets.append(settings_button)
     return settings_button
 

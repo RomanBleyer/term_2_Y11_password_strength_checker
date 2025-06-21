@@ -15,7 +15,6 @@ def copy_to_clipboard_button(parent, password_entry, widgets):
 
     copy_btn = ttk.Button(parent, image=copy_to_clipboard_image, command=copy_to_clipboard)
     copy_btn.image = copy_to_clipboard_image  # Prevent image garbage collection
-    copy_btn.pack(side="left", padx=(0, 5))  # Button on the left
     widgets.append(copy_btn)
     return copy_btn
 
