@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import os
+from password_enter_tab import create_password_entry
 
 def copy_to_clipboard_button(parent, password_entry, widgets):
     image_path = os.path.join(os.path.dirname(__file__), "password_checker_images", "copy_to_clipboard.png")

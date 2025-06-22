@@ -70,13 +70,13 @@ class PasswordGeneratorUI:
         # Generate Button
         def on_generate():
             try:
-                length = int(self.number_var.get())
+                length = int(self.length_var.get())
             except ValueError:
                 length = 12
             pwd = generate_password(self.settings_state, length)
             self.password_var.set(pwd)
 
-        gen_btn = tk.Button(self.master, text="Generate Password", command=on_generate)
+        gen_btn = tk.Button(self.master, text="Generate Password", font=("Segoe UI", 12, "bold"), command=on_generate)
         gen_btn.pack(pady=(10, 0))
         self.widgets.append(gen_btn)
 

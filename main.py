@@ -1,6 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
 
+# TODO
+# make the copy thing work
+# figure out what the password strength checker is actually doing and remake it but better
+# (hard) try to fix the popup not appearing in the right place
+# actually write a about us/help page
+# make the "copy after generation" setting work
+# make the "check strength after generation" setting work
+
 # File function imports
 from password_enter_tab import create_password_entry
 from copy_to_clipboard_button import copy_to_clipboard_button
@@ -10,6 +18,9 @@ from back_to_main_menu_button import back_to_main_menu_button
 from password_generation_settings import create_password_generation_settings
 from about_us_tab import about_us_button
 from about_us_window import show_about_us_window
+from password_generator import generate_password
+from password_strength_checker import check_password
+
 class PasswordStrengthChecker:
     def __init__(self, master):
         self.master = master
@@ -52,10 +63,16 @@ class PasswordStrengthChecker:
             widgets.append(entry_frame)
 
             # Entry row widgets
-            copy_btn = copy_to_clipboard_button(entry_frame, None, widgets)
             # Persistent StringVar for password entry
+            def validate_password_entry(P):
+                return len(P) <= 16
+
+            vcmd_pwd = (self.master.register(validate_password_entry), "%P")
             self.password_var = getattr(self, 'password_var', tk.StringVar())
             password_entry = create_password_entry(entry_frame, widgets, textvariable=self.password_var)
+            password_entry.config(validate="key", validatecommand=vcmd_pwd)
+
+            copy_btn = copy_to_clipboard_button(entry_frame, password_entry, widgets)
             show_password_state = [True]
             eye_btn = hide_unhide_password_button(entry_frame, password_entry, widgets, show_password_state)
 
@@ -81,16 +98,37 @@ class PasswordStrengthChecker:
 
             # Generate Password button (big)
             def on_generate():
-                # You can implement password generation logic here
-                pass  # Replace with your logic
+                try:
+                    length = int(self.length_var.get())
+                except ValueError:
+                    length = 12
+                pwd = generate_password(self.settings_state, length)
+                self.password_var.set(pwd)
 
             generate_btn = tk.Button(self.master, text="Generate Password", font=("Segoe UI", 12, "bold"), command=on_generate)
             generate_btn.place(x=90, y=controls_y, width=160, height=40)
             widgets.append(generate_btn)
 
             # Entry for password length (default 12)
+            def validate_number(P):
+                if P == "":
+                    return True
+                if P.isdigit():
+                    value = int(P)
+                    return 1 <= value <= 16
+                return False
+
+            vcmd = (self.master.register(validate_number), "%P")
             self.length_var = getattr(self, 'length_var', tk.StringVar(value="12"))
-            length_entry = tk.Entry(self.master, textvariable=self.length_var, width=4, font=("Segoe UI", 12), justify="center")
+            length_entry = tk.Entry(
+                self.master,
+                textvariable=self.length_var,
+                width=4,
+                font=("Segoe UI", 12),
+                justify="center",
+                validate="key",
+                validatecommand=vcmd
+            )
             length_entry.place(x=260, y=controls_y+7, width=40, height=26)
             widgets.append(length_entry)
 
@@ -100,11 +138,33 @@ class PasswordStrengthChecker:
             widgets.append(max_label)
 
             # --- Check Password button centered under controls row ---
+            def show_password_check_window(result_text):
+                win = tk.Toplevel(self.master)
+                win.title("Password Check Result")
+                win.resizable(False, False)
+                # Get main window position and size
+                self.master.update_idletasks()
+                main_x = self.master.winfo_x()
+                main_y = self.master.winfo_y()
+                main_w = self.master.winfo_width()
+                main_h = self.master.winfo_height()
+                win_w, win_h = 320, 220  # Size of the popup
+                # Place at center-bottom-right of main window
+                x = main_x + main_w - win_w - 20
+                y = main_y + main_h//2 - win_h//2
+                win.geometry(f"{win_w}x{win_h}+{x}+{y}")
+
+                label = tk.Label(win, text=result_text, font=("Segoe UI", 10), justify="left", anchor="nw", wraplength=300)
+                label.pack(padx=10, pady=10, fill="both", expand=True)
+
+                close_btn = tk.Button(win, text="Close", command=win.destroy)
+                close_btn.pack(pady=(0, 10))
+
             check_btn = tk.Button(
                 self.master,
                 text="Check Password",
                 font=("Segoe UI", 12, "bold"),
-                command=lambda: print("Check password logic here")  # Replace with your logic
+                command=lambda: show_password_check_window(check_password(self.password_var.get()))
             )
             # Centered horizontally: window width is 500, button width is 160
             check_btn.place(x=170, y=controls_y+45, width=160, height=40)  # moved up by 10px
@@ -120,6 +180,12 @@ class PasswordStrengthChecker:
 
             about_btn = about_us_button(self.master, widgets, go_to_about)
             widgets.append(about_btn)
+
+            def block_space(event):
+                if event.char == " ":
+                    return "break"
+
+            password_entry.bind("<Key>", block_space)
 
         elif self.what_page_am_i_on == "password_generator_settings_menu":
             # Destroy all widgets from previous menu
